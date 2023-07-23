@@ -1,5 +1,5 @@
 {
-  "name": "@chenbo860826/dm-client",
+  "name": "dm-client",
   "version": "0.0.1",
   "description": "client library for dm (DataMaster) platform",
   "module": "index.mjs",
