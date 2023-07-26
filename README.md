@@ -17,7 +17,9 @@ let batch = new DataBatch('https://***.dm.com',
 		'7be433c9-b332-4177-abeb-a636b017510a',
 		'batch202306010800');
 
-// initialize the batch
+// initialize the batch.
+// Remarks: client shall specify { allowUnauthorizedHttps: true } when connect to 
+//          an https server without valid SSL certificate.
 await batch.init();
 
 // add objects to the batch
@@ -54,11 +56,15 @@ It create a DataBatch instance with the following arguments:
 
 *Syntax:*
 
-`Promise(void) init()`
+`Promise(void) init(Map options)`
 
 *Description:*
 
-Initialize the batch from DM. It will open a new batch for write if success. Otherwise, it will possibly throw the following Http Errors if error happens.
+Initialize the batch from DM. The options could contains the following options or leave unspecified.
+
+- allowUnauthorizedHttps: boolean, default to false. Client shall set it as true when connect to a https server without valid SSL certificates.
+
+It will open a new batch for write if success. Otherwise, it will possibly throw the following Http Errors if error happens.
 
 | Status | Error             | Description                                                  |
 | ------ | ----------------- | ------------------------------------------------------------ |

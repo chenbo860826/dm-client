@@ -1,6 +1,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
+import https from 'https';
 import FormData from 'form-data';
 import { createHash } from 'crypto';
 
@@ -14,8 +15,15 @@ export class DataBatch {
         this.interval;
     }
 
-    async init() {
+    async init(options) {
+        if (this.server.startsWith('https') && options?.allowUnauthorizedHttps) {
+            this.serverOptions = { httpsAgent: new https.Agent({ rejectUnauthorized: false }) };
+        }
+
+        // register new version
         let response = await this.postServer('/api/storage/versions', { name: this.name });
+
+        // then initialize batch
         this.version = response.data.version;
         this.timeout = response.data.timeout * 1000; // response timeout in s
         this.stop();
@@ -59,7 +67,7 @@ export class DataBatch {
             // prepare files at first
             let findResponse = await this.postServer(`/api/file/find`, files.map(i => i.key));
             let fileMap = new Set();
-            findResponse.data.forEach(i=>fileMap.add(i));
+            findResponse.data.forEach(i => fileMap.add(i));
             let uploadFiles = files.filter(i => !fileMap.has(i.key));
             for (let i of uploadFiles) {
                 var formData = new FormData();
@@ -67,7 +75,7 @@ export class DataBatch {
                 let response = await this.postServer('/api/file/files', formData);
 
                 // We shall assert equaity of our own name and server's result
-                if(response.data.fileName != i.key) {
+                if (response.data.fileName != i.key) {
                     throw new Error('Inconsist File Upload');
                 }
             }
@@ -92,7 +100,7 @@ export class DataBatch {
     }
 
     postServer(url, data) {
-        let result = axios.post(this.server + url, data || {}, { headers: { collector: this.collector, appkey: this.appKey } });
+        let result = axios.post(this.server + url, data || {}, { headers: { collector: this.collector, appkey: this.appKey }, ...this.serverOptions });
         this.lat = Date.now(); // update lat when any request success
         return result;
     }
