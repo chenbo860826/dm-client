@@ -99,10 +99,23 @@ export class DataBatch {
         this.stop();
     }
 
-    postServer(url, data) {
-        let result = axios.post(this.server + url, data || {}, { headers: { collector: this.collector, appkey: this.appKey }, ...this.serverOptions });
-        this.lat = Date.now(); // update lat when any request success
-        return result;
+    async postServer(url, data) {
+        try {
+            let result = await axios.post(this.server + url, data || {}, { headers: { collector: this.collector, appkey: this.appKey }, ...this.serverOptions });
+            this.lat = Date.now(); // update lat when any request success
+            return result;
+        }
+        catch (e) {
+            let message = e.response?.data?.message;
+            if(message) {
+                let err = new Error(message);
+                err.status = e.response.status;
+                throw err;
+            }
+            else {
+                throw e; // simply throw original error
+            }
+        }
     }
 }
 
