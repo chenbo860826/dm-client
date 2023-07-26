@@ -1,6 +1,6 @@
 {
   "name": "dm-client",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "client library for dm (DataMaster) platform",
   "module": "index.mjs",
   "scripts": {
