@@ -72,7 +72,7 @@ export class DataBatch {
             for (let i of uploadFiles) {
                 var formData = new FormData();
                 formData.append('file', fs.createReadStream(i.file), i.key);
-                let response = await this.postServer('/api/file/files', formData);
+                let response = await this.postServer('/api/file/files', formData, { headers: formData.getHeaders() });
 
                 // We shall assert equaity of our own name and server's result
                 if (response.data.fileName != i.key) {
@@ -99,15 +99,15 @@ export class DataBatch {
         this.stop();
     }
 
-    async postServer(url, data) {
+    async postServer(url, data, options) {
         try {
-            let result = await axios.post(this.server + url, data || {}, { headers: { collector: this.collector, appkey: this.appKey }, ...this.serverOptions });
+            let result = await axios.post(this.server + url, data || {}, { headers: { collector: this.collector, appkey: this.appKey, ...options?.headers }, ...this.serverOptions });
             this.lat = Date.now(); // update lat when any request success
             return result;
         }
         catch (e) {
             let message = e.response?.data?.message;
-            if(message) {
+            if (message) {
                 let err = new Error(message);
                 err.status = e.response.status;
                 throw err;
