@@ -1,11 +1,11 @@
-import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
-import https from 'https';
-import FormData from 'form-data';
-import { createHash } from 'crypto';
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+const FormData = require('form-data');
+const { createHash } = require('crypto');
 
-export class DataBatch {
+class DataBatch {
     constructor(server, collector, appKey, name) {
         this.server = server;
         this.collector = collector;
@@ -119,7 +119,7 @@ export class DataBatch {
     }
 }
 
-export class FileField {
+class FileField {
     constructor(path) {
         this.path = path;
     }
@@ -181,3 +181,5 @@ async function handleFiles(json) {
     let body = await traverseObject(json);
     return { body, files };
 }
+
+module.exports = { DataBatch, FileField }

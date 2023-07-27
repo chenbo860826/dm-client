@@ -1,8 +1,8 @@
 {
   "name": "dm-client",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "client library for dm (DataMaster) platform",
-  "module": "index.mjs",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
